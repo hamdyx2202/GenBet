@@ -64,7 +64,8 @@ Winners claim proportional share of total pool (800 GEN)
 | **AI Resolution** | Contract fetches web data and uses LLM to determine outcome |
 | **Consensus Verification** | Multiple validators independently verify the AI's answer |
 | **Auto-Payout** | Winners receive proportional share of the total pool |
-| **Points Tracking** | Leaderboard of top predictors by winnings |
+| **Points Tracking** | Track user winnings with `get_user_points()` |
+| **Bet Accumulation** | Users can add to existing bets on same option |
 | **Platform Stats** | Total markets, volume, and resolved count |
 
 ## Quick Start
@@ -100,6 +101,8 @@ Visit [studio.genlayer.com](https://studio.genlayer.com/) and paste the contract
 | `resolve_market(market_id)` | write | AI fetches data and resolves outcome |
 | `claim_winnings(market_id)` | write | Winners withdraw their share |
 | `get_market(market_id)` | view | Get market details |
+| `get_user_bet(market_id, user)` | view | Get user's bet on a market |
+| `get_user_points(user)` | view | Get user's total winnings |
 | `get_stats()` | view | Platform statistics |
 | `get_market_count()` | view | Total number of markets |
 
@@ -137,8 +140,8 @@ GenBet/
 │   └── prediction_market.py    # Intelligent Contract (Python)
 ├── deploy/
 │   └── deployScript.ts         # Deployment script
-├── tests/
-│   └── (test files)
+├── deploy/
+│   └── deployScript.ts         # Deployment script
 ├── requirements.txt
 ├── package.json
 ├── README.md
@@ -155,9 +158,9 @@ GenBet/
 | Consensus | Optimistic Democracy + Equivalence Principle |
 | Deployment | GenLayer CLI + Testnet Bradbury |
 
-## Revenue Model
+## Revenue Potential
 
-GenLayer's dev fee model means this contract earns **20% of all transaction fees** it generates — permanently. More users = more revenue for the creator.
+GenLayer's dev fee model enables contracts to earn **up to 20% of transaction fees** generated on mainnet. Top hackathon projects get priority mainnet deployment and first access to this revenue model.
 
 ## Built For
 

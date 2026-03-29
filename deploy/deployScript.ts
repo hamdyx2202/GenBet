@@ -8,8 +8,6 @@ export default async function main(client: any) {
     readFileSync("contracts/prediction_market.py")
   );
 
-  await client.initializeConsensusSmartContract();
-
   const deployTx = await client.deployContract({
     code: contractCode,
     args: [],
@@ -24,7 +22,6 @@ export default async function main(client: any) {
   });
 
   console.log(`GenBet deployed at: ${receipt.data.contract_address}`);
-  console.log("Explorer: https://scan.genlayer.com/contract/" + receipt.data.contract_address);
 
   return receipt.data.contract_address;
 }
