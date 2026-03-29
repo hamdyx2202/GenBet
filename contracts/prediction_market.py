@@ -118,11 +118,10 @@ class GenBet(gl.Contract):
             existing_bet = self.bets[market_id][user_hex]
             if existing_bet.option == option:
                 existing_amount = existing_bet.amount
-            else:
+            elif existing_bet.option != "":
                 raise Exception("Cannot bet on both options. You already bet on: " + existing_bet.option)
-        except (KeyError, Exception) as e:
-            if "Cannot bet on both" in str(e):
-                raise
+        except KeyError:
+            pass  # No existing bet - that's fine
 
         self.bets[market_id][user_hex] = Bet(
             market_id=market_id,

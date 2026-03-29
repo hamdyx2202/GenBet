@@ -46,7 +46,7 @@ Winners claim proportional share of total pool (800 GEN)
 │  (Python)       │  • Optimistic Democracy consensus  │
 │                 │  • AI validators with LLMs          │
 │  • Create       │  • Equivalence Principle            │
-│    markets      │  • 20% dev fee on transactions      │
+│    markets      │  • Proportional winner payouts       │
 │  • Place bets   │                                    │
 │  • AI resolve   │  Web Access:                       │
 │  • Auto-payout  │  • gl.nondet.web.render()          │
@@ -109,16 +109,19 @@ Visit [studio.genlayer.com](https://studio.genlayer.com/) and paste the contract
 ## AI Resolution Flow (The GenLayer-Unique Part)
 
 ```python
-# 1. Fetch real-world data
-web_data = gl.nondet.web.render(resolution_url, mode="text")
+def fetch_and_resolve():
+    # 1. Fetch real-world data
+    web_data = gl.nondet.web.render(resolution_url, mode="text")
 
-# 2. AI analyzes the data
-result = gl.nondet.exec_prompt(
-    f"Question: {question}\nData: {web_data}\nWhich option won?",
-    response_format="json"
-)
+    # 2. AI determines the outcome
+    result = gl.nondet.exec_prompt(
+        f"Question: {question}\nData: {web_data}\nWhich option won?"
+    )
 
-# 3. Validators must agree (Equivalence Principle)
+    # 3. Return ONLY deterministic outcome for consensus
+    return json.dumps({"outcome": result.strip()}, sort_keys=True)
+
+# 4. Validators must ALL agree (Equivalence Principle)
 outcome = gl.eq_principle.strict_eq(fetch_and_resolve)
 ```
 
@@ -138,8 +141,6 @@ This is impossible on Ethereum or Solana — only GenLayer's Intelligent Contrac
 GenBet/
 ├── contracts/
 │   └── prediction_market.py    # Intelligent Contract (Python)
-├── deploy/
-│   └── deployScript.ts         # Deployment script
 ├── deploy/
 │   └── deployScript.ts         # Deployment script
 ├── requirements.txt
