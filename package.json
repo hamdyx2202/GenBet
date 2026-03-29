@@ -1,0 +1,15 @@
+{
+  "name": "genbet",
+  "version": "1.0.0",
+  "description": "AI Prediction Market on GenLayer - bet on real-world outcomes resolved by AI consensus",
+  "scripts": {
+    "deploy": "genlayer deploy",
+    "network": "genlayer network"
+  },
+  "keywords": ["genlayer", "prediction-market", "ai", "betting", "blockchain"],
+  "author": "hamdyx2202",
+  "license": "MIT",
+  "dependencies": {
+    "genlayer-js": "^0.5.0"
+  }
+}
