@@ -6,33 +6,36 @@
 
 ## What It Does
 
-GenBet lets users create prediction markets on any real-world event. When the event concludes, an Intelligent Contract:
+GenBet lets users create prediction markets on any real-world event. When the event concludes, the Intelligent Contract:
 
-1. **Fetches** real-world data from the source URL
-2. **Analyzes** it using an LLM to determine the outcome
-3. **Reaches consensus** via Optimistic Democracy (multiple validators must agree)
-4. **Distributes** winnings to correct bettors automatically
+1. **Fetches** real-world data from the source URL via `gl.nondet.web.render()`
+2. **Analyzes** it using an LLM via `gl.nondet.exec_prompt()`
+3. **Reaches consensus** via Optimistic Democracy — multiple validators independently verify
+4. **Updates state** automatically based on the AI's determination
 
-No oracle feeds. No manual resolution. No trust assumptions. Just AI reading the web and validators agreeing on truth.
+No oracle feeds. No manual resolution. No trust assumptions.
+
+## Live Demo Results
+
+Successfully deployed and tested on GenLayer Studio:
+
+- **Deploy**: `0xcb31...` — FINALIZED ✓
+- **Resolve**: `0x8fda...` — AI fetched CoinMarketCap data, validators reached consensus via Optimistic Democracy with leader rotation — FINALIZED ✓
+- **get_resolution_data**: Returns live market state ✓
 
 ## How It Works
 
 ```
-User creates market: "Will BTC hit $100K by April?"
+User creates market: "Will Bitcoin reach 100K by April 2026?"
     → Option A: "Yes"  |  Option B: "No"
-    → Resolution URL: coinmarketcap.com/bitcoin
+    → Resolution URL: coinmarketcap.com/currencies/bitcoin/
 
-Users place bets with GEN tokens
-    → 5 users bet "Yes" (total: 500 GEN)
-    → 3 users bet "No" (total: 300 GEN)
-
-When event concludes → Anyone calls resolve_market()
+Anyone calls resolve()
     → Intelligent Contract fetches coinmarketcap.com
-    → AI extracts: "BTC price: $102,450" → Outcome: "Yes"
+    → AI extracts Bitcoin price and determines outcome
     → Validators verify independently (Equivalence Principle)
-    → All agree → Market resolved
-
-Winners claim proportional share of total pool (800 GEN)
+    → If consensus reached → Market resolved
+    → If not determinable → Market stays open (winner = -1)
 ```
 
 ## Architecture
@@ -46,105 +49,87 @@ Winners claim proportional share of total pool (800 GEN)
 │  (Python)       │  • Optimistic Democracy consensus  │
 │                 │  • AI validators with LLMs          │
 │  • Create       │  • Equivalence Principle            │
-│    markets      │  • Proportional winner payouts       │
-│  • Place bets   │                                    │
-│  • AI resolve   │  Web Access:                       │
-│  • Auto-payout  │  • gl.nondet.web.render()          │
+│    markets      │  • Leader rotation on disagreement  │
+│  • AI resolve   │  • Proportional winner payouts      │
+│  • View state   │                                    │
+│                 │  Web Access:                       │
+│                 │  • gl.nondet.web.render()          │
 │                 │  • gl.nondet.exec_prompt()          │
 │                 │  • gl.eq_principle.strict_eq()      │
 └─────────────────┴───────────────────────────────────┘
 ```
 
-## Intelligent Contract Features
-
-| Feature | Description |
-|---------|-------------|
-| **Create Markets** | Any user can create a market with a question, two options, and a resolution URL |
-| **Place Bets** | Send GEN tokens to bet on your predicted outcome |
-| **AI Resolution** | Contract fetches web data and uses LLM to determine outcome |
-| **Consensus Verification** | Multiple validators independently verify the AI's answer |
-| **Auto-Payout** | Winners receive proportional share of the total pool |
-| **Points Tracking** | Track user winnings with `get_user_points()` |
-| **Bet Accumulation** | Users can add to existing bets on same option |
-| **Platform Stats** | Total markets, volume, and resolved count |
-
-## Quick Start
-
-### Prerequisites
-- Python 3.12+
-- Node.js 18+
-- GenLayer CLI (`npm install -g genlayer`)
-
-### Setup
-```bash
-git clone https://github.com/hamdyx2202/GenBet.git
-cd GenBet
-pip install -r requirements.txt
-npm install
-```
-
-### Deploy
-```bash
-genlayer network          # Select testnet-bradbury
-genlayer deploy           # Deploy the Intelligent Contract
-```
-
-### Test in GenLayer Studio
-Visit [studio.genlayer.com](https://studio.genlayer.com/) and paste the contract code to test interactively.
-
 ## Contract Methods
 
 | Method | Type | Description |
 |--------|------|-------------|
-| `create_market(question, option_a, option_b, url)` | write | Create a new prediction market |
-| `place_bet(market_id, option)` | write.payable | Bet GEN tokens on an option |
-| `resolve_market(market_id)` | write | AI fetches data and resolves outcome |
-| `claim_winnings(market_id)` | write | Winners withdraw their share |
-| `get_market(market_id)` | view | Get market details |
-| `get_user_bet(market_id, user)` | view | Get user's bet on a market |
-| `get_user_points(user)` | view | Get user's total winnings |
-| `get_stats()` | view | Platform statistics |
-| `get_market_count()` | view | Total number of markets |
+| `__init__(question, option_a, option_b, resolution_url)` | constructor | Create a new prediction market |
+| `resolve()` | write | AI fetches data and resolves outcome via consensus |
+| `get_resolution_data()` | view | Get market state (question, options, outcome, resolved status) |
 
-## AI Resolution Flow (The GenLayer-Unique Part)
+## GenLayer Features Used
+
+| Feature | How We Use It |
+|---------|---------------|
+| **Optimistic Democracy** | Validators independently verify AI's outcome determination |
+| **Equivalence Principle** | `gl.eq_principle.strict_eq()` ensures consensus on market resolution |
+| **Web Access** | `gl.nondet.web.render()` fetches real-world data from any URL |
+| **LLM Integration** | `gl.nondet.exec_prompt()` for AI-powered outcome analysis |
+| **Leader Rotation** | Automatic re-election when validators disagree |
+
+## AI Resolution Logic
 
 ```python
 def fetch_and_resolve():
-    # 1. Fetch real-world data
-    web_data = gl.nondet.web.render(resolution_url, mode="text")
+    # 1. Fetch real-world data from resolution URL
+    web_data = gl.nondet.web.render(market_url, mode="text")
 
-    # 2. AI determines the outcome
-    result = gl.nondet.exec_prompt(
-        f"Question: {question}\nData: {web_data}\nWhich option won?"
-    )
+    # 2. AI analyzes the data
+    result = gl.nondet.exec_prompt(task)
 
-    # 3. Return ONLY deterministic outcome for consensus
-    return json.dumps({"outcome": result.strip()}, sort_keys=True)
+    # 3. Parse and return structured result
+    return json.loads(result)
 
-# 4. Validators must ALL agree (Equivalence Principle)
-outcome = gl.eq_principle.strict_eq(fetch_and_resolve)
+# 4. All validators must agree (Equivalence Principle)
+result_json = gl.eq_principle.strict_eq(fetch_and_resolve)
 ```
-
-This is impossible on Ethereum or Solana — only GenLayer's Intelligent Contracts can natively access the web and use AI for consensus.
 
 ## Use Cases
 
-- **Sports:** "Will Real Madrid win El Clasico?" → resolves from BBC Sport
-- **Crypto:** "Will BTC hit $100K by April?" → resolves from CoinMarketCap
-- **Politics:** "Will candidate X win the election?" → resolves from news sources
-- **Weather:** "Will it rain in Cairo tomorrow?" → resolves from weather API
-- **Tech:** "Will Apple announce a new product at WWDC?" → resolves from tech news
+- **Crypto**: "Will BTC hit $100K by April?" → resolves from CoinMarketCap
+- **Sports**: "Will Real Madrid win El Clasico?" → resolves from BBC Sport
+- **Politics**: "Will candidate X win the election?" → resolves from news sources
+- **Weather**: "Will it rain in Cairo tomorrow?" → resolves from weather services
+- **Tech**: "Will Apple announce new product at WWDC?" → resolves from tech news
+
+## Quick Start
+
+### Test on GenLayer Studio
+1. Visit [studio.genlayer.com](https://studio.genlayer.com/)
+2. Upload `contracts/genbet_v2.py` (or `prediction_market.py`)
+3. Deploy with: question, option_a, option_b, resolution_url
+4. Call `resolve()` to trigger AI resolution
+5. Call `get_resolution_data()` to see results
+
+### Deploy via CLI
+```bash
+npm install -g genlayer
+genlayer network     # Select testnet-bradbury
+genlayer deploy      # Deploy the contract
+```
 
 ## Project Structure
 
 ```
 GenBet/
 ├── contracts/
-│   └── prediction_market.py    # Intelligent Contract (Python)
+│   ├── prediction_market.py    # Main Intelligent Contract
+│   └── genbet_v2.py            # Same contract (Studio-compatible)
 ├── deploy/
-│   └── deployScript.ts         # Deployment script
+│   └── deployScript.ts         # CLI deployment script
 ├── requirements.txt
 ├── package.json
+├── SUBMISSION_READY.md
 ├── README.md
 └── LICENSE
 ```
@@ -154,14 +139,20 @@ GenBet/
 | Component | Technology |
 |-----------|-----------|
 | Smart Contract | GenLayer Intelligent Contract (Python) |
-| AI | LLMs via gl.nondet.exec_prompt() |
-| Web Access | gl.nondet.web.render() |
+| AI | LLMs via `gl.nondet.exec_prompt()` |
+| Web Access | `gl.nondet.web.render()` |
 | Consensus | Optimistic Democracy + Equivalence Principle |
-| Deployment | GenLayer CLI + Testnet Bradbury |
+
+## Why GenLayer?
+
+This is **impossible on Ethereum or Solana**. Only GenLayer's Intelligent Contracts can:
+- Natively access the web without oracles
+- Use AI (LLMs) for on-chain decision making
+- Reach consensus on subjective, non-deterministic outputs
 
 ## Revenue Potential
 
-GenLayer's dev fee model enables contracts to earn **up to 20% of transaction fees** generated on mainnet. Top hackathon projects get priority mainnet deployment and first access to this revenue model.
+GenLayer's dev fee model enables contracts to earn **up to 20% of transaction fees** generated on mainnet. Top hackathon projects get priority mainnet deployment.
 
 ## Built For
 
