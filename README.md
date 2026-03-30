@@ -50,7 +50,7 @@ Anyone calls resolve()
 │                 │  • AI validators with LLMs          │
 │  • Create       │  • Equivalence Principle            │
 │    markets      │  • Leader rotation on disagreement  │
-│  • AI resolve   │  • Proportional winner payouts      │
+│  • AI resolve   │  • On-chain state persistence       │
 │  • View state   │                                    │
 │                 │  Web Access:                       │
 │                 │  • gl.nondet.web.render()          │

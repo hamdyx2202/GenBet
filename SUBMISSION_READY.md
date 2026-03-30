@@ -13,13 +13,13 @@ https://github.com/hamdyx2202/GenBet
 [PASTE YOUTUBE LINK AFTER RECORDING]
 
 ## Short Description (for BUIDL vision - max 256 chars)
-AI prediction market on GenLayer where users bet on real-world outcomes and Intelligent Contracts resolve truth by fetching web data and reaching AI consensus via Equivalence Principle.
+AI prediction oracle on GenLayer where Intelligent Contracts resolve real-world outcomes by fetching web data and reaching AI consensus via Optimistic Democracy and Equivalence Principle.
 
 ## Full Description
 
 ### GenBet - AI Prediction Market
 
-GenBet is a prediction market platform built on GenLayer where outcomes are resolved by AI consensus — not centralized oracles or manual reporting.
+GenBet is an AI-powered prediction resolution system built on GenLayer where real-world outcomes are determined by AI consensus — not centralized oracles or manual reporting.
 
 ### How It Works
 1. Users create prediction markets on any real-world event with a question, two options, and a resolution URL
