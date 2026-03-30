@@ -10,7 +10,7 @@ Prediction Markets & P2P Betting
 https://github.com/hamdyx2202/GenBet
 
 ## Demo Video
-[PASTE YOUTUBE LINK AFTER RECORDING]
+https://www.youtube.com/watch?v=b_Jc5_pei44
 
 ## Short Description (for BUIDL vision - max 256 chars)
 AI prediction oracle on GenLayer where Intelligent Contracts resolve real-world outcomes by fetching web data and reaching AI consensus via Optimistic Democracy and Equivalence Principle.
