@@ -123,13 +123,12 @@ genlayer deploy      # Deploy the contract
 ```
 GenBet/
 ├── contracts/
-│   ├── prediction_market.py    # Main Intelligent Contract
-│   └── genbet_v2.py            # Same contract (Studio-compatible)
+│   ├── prediction_market.py    # Main Intelligent Contract (Python)
+│   └── genbet_v2.py            # Same contract (Studio upload version)
 ├── deploy/
 │   └── deployScript.ts         # CLI deployment script
-├── requirements.txt
-├── package.json
-├── SUBMISSION_READY.md
+├── requirements.txt            # Python dependencies
+├── package.json                # Node.js dependencies
 ├── README.md
 └── LICENSE
 ```

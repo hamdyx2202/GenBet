@@ -10,7 +10,12 @@ export default async function main(client: any) {
 
   const deployTx = await client.deployContract({
     code: contractCode,
-    args: [],
+    args: [
+      "Will Bitcoin reach 100K by April 2026?",
+      "Yes",
+      "No",
+      "https://www.coinmarketcap.com/currencies/bitcoin/"
+    ],
   });
 
   console.log("Deploy TX:", deployTx);
