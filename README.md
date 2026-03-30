@@ -1,12 +1,12 @@
 # GenBet - AI Prediction Market on GenLayer
 
-**Bet on real-world outcomes. AI resolves the truth.**
+**Predict real-world outcomes. AI resolves the truth.**
 
 > The first prediction market where outcomes are resolved by AI consensus — not centralized oracles, not manual reporting, but Intelligent Contracts that read the real world.
 
 ## What It Does
 
-GenBet lets users create prediction markets on any real-world event. When the event concludes, the Intelligent Contract:
+GenBet creates prediction markets on real-world events. Each deployment defines a question with two options and a resolution URL. When the event concludes, the Intelligent Contract:
 
 1. **Fetches** real-world data from the source URL via `gl.nondet.web.render()`
 2. **Analyzes** it using an LLM via `gl.nondet.exec_prompt()`
